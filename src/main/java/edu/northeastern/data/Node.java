@@ -1,22 +1,35 @@
 package edu.northeastern.data;
 
 public class Node {
-    //crimeID,longitude,latitude
-    //f819dabb36b5c1b081c8caa6a02764f7c122f7d8774df1ebb0a095fe454576,-0.016542,51.515192
-    public String id;
-    public double longitude;
-    public double latitude;
-    public static int counter = 0;
-    public int unique_id;
-    public Node(String id,double longitude,double latitude){
+    private String id;
+    private double longitude;
+    private double latitude;
+    //    public static int counter = 0;
+    private int unique_id;
+
+    public Node(String id, double longitude, double latitude, int unique_id) {
         this.id = id;
-        this.longitude=longitude;
-        this.latitude=latitude;
-        this.unique_id = counter++;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.unique_id = unique_id;
     }
 
-    public String toString(){
-        return "Unique id: " +Integer.toString(unique_id)+" longitude :"+Double.toString(longitude)+" latitude :"+Double.toString(latitude);
+    public String toString() {
+        return "Unique id: " + Integer.toString(unique_id) + " longitude :" + Double.toString(longitude) + " latitude :" + Double.toString(latitude);
+    }
+
+    // Getter
+    public String getId() {
+        return id;
+    }
+    public double getLongitude() {
+        return longitude;
+    }
+    public double getLatitude() {
+        return latitude;
+    }
+    public int getUnique_id() {
+        return unique_id;
     }
 
 }

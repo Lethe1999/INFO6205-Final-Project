@@ -1,19 +1,21 @@
 package edu.northeastern;
+
+import edu.northeastern.algorithm.Prim;
 import edu.northeastern.data.*;
+
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
+        // Creat graph
+        Graph graph = new Graph();
+        graph.createGraph("src/main/resources/crimeSample.csv");
 
-        //test node
-        //System.out.println("Hello world!");
-        //Node n1 = new Node("cid1",10,10);
-        //Node n2 = new Node("cid2",11,11);
-        //System.out.println(n1);
-        //System.out.println(n2);
-        //test edges
-        //Edge e1 = new Edge(n1,n2);
-        //System.out.println(e1);
-        //test Graph
-        Graph g1= new Graph();
-        g1.inputCSV("src/crimeSample.csv");
+        // Using Prim Algorithm to create Minimum Spanning Tree
+        Prim prim = new Prim(graph);
+        List<String> path = prim.getPath(graph);
+        for (String p : path) {
+            System.out.println(p);
+        }
     }
 }
