@@ -6,11 +6,10 @@ import edu.northeastern.data.Node;
 import java.util.*;
 
 public class Prim {
-
     private List<double[]>[] graph;
     private Queue<double[]> pq;     // Store cut array
     private boolean[] visited;      // Already used nodes
-    private List<Integer> path;
+    private List<double[]>[] mst;   // Minimum Spanning Tree
 
     // Create sequence of nodes (path)
     public Prim(Graph map) {
@@ -21,21 +20,24 @@ public class Prim {
         });
         int n = graph.length;
         this.visited = new boolean[n];
-        this.path = new LinkedList<>();
+        this.mst = new LinkedList[n];
+        for (int i = 0; i < n; i++) {
+            mst[i] = new LinkedList<>();
+        }
 
         // Start from the first node (Or any node is available)
         int start = 0;
         visited[start] = true;
-        path.add(start);
         cut(start);
 
         while (!pq.isEmpty()) {
             double[] edge = pq.poll();
+            int from = (int) edge[0];
             int to = (int) edge[1];
             if (!visited[to]) {
                 visited[to] = true;
-                path.add(to);
-                cut(to);        // More edges
+                mst[from].add(edge);    // Add edges in mst
+                cut(to);        // Add edges to pq
             }
         }
     }
@@ -50,17 +52,7 @@ public class Prim {
         }
     }
 
-    public List<Integer> getPath() {
-        return path;
-    }
-
-    public List<String> getPath(Graph map) {
-        List<String> nodeList = new LinkedList<>();
-        // Find id from Node class
-        ArrayList<Node> nodes = map.getNodes();
-        for (int p : path) {
-            nodeList.add(nodes.get(p).getId());
-        }
-        return nodeList;
+    public List<double[]>[] getMst() {
+        return mst;
     }
 }

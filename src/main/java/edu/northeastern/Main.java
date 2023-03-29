@@ -13,9 +13,6 @@ public class Main {
 
         // Using Prim Algorithm to create Minimum Spanning Tree
         Prim prim = new Prim(graph);
-        List<String> path = prim.getPath(graph);
-        for (String p : path) {
-            System.out.println(p);
-        }
+        List<double[]>[] mst = prim.getMst();
     }
 }
