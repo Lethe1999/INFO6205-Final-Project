@@ -57,5 +57,30 @@ public class Graph {
     public ArrayList<Node> getNodes() {
         return nodes;
     }
+
+    public void setNodes(ArrayList<Node> ns){
+        this.nodes=ns;
+    }
+    public void setGraph(List<double[]>[] g){
+        this.graph=g;
+    }
+    public void showGraph(String name ){
+        System.out.println("------------");
+
+        System.out.println("The Graph name : "+name +" has " + nodes.size()  +" nodes.");
+        Queue<double[]> pq = new PriorityQueue<>((a, b) -> {
+            return a[2] - b[2] > 0 ? 1 : (a[2] - b[2] < 0 ? -1 : 0);
+        });
+        for(int i = 0 ;i< graph.length;i++){
+            for (double[] edge : graph[i]) {
+                pq.offer(edge);
+            }
+        }
+        while(!pq.isEmpty()){
+            double[] edge =pq.poll();
+            System.out.println("Edge from "+edge[0]+" to "+ edge[1]+" with distance "+edge[2]);
+        }
+        System.out.println("------------");
+    }
 }
 

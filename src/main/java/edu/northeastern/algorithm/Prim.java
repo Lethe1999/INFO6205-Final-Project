@@ -37,6 +37,9 @@ public class Prim {
             if (!visited[to]) {
                 visited[to] = true;
                 mst[from].add(edge);    // Add edges in mst
+                //Also add the opposite direction  edge !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!changed
+                double[] edgeOpposite=new double[]{edge[1],edge[0],edge[2]};
+                mst[to].add(edgeOpposite);
                 cut(to);        // Add edges to pq
             }
         }
