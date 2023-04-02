@@ -15,7 +15,10 @@ public class Node {
     }
 
     public String toString() {
-        return "Unique id: " + Integer.toString(unique_id) + " longitude :" + Double.toString(longitude) + " latitude :" + Double.toString(latitude);
+        return "Unique id: " + unique_id
+                + " longitude: " + longitude
+                + " latitude: " + latitude
+                + " id: " + id;
     }
 
     // Getter

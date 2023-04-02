@@ -1,4 +1,5 @@
 package edu.northeastern.algorithm;
+
 import edu.northeastern.data.Graph;
 import edu.northeastern.data.Node;
 
@@ -9,41 +10,41 @@ public class GreedyMinWeightMatching {
     private Graph totalGraph;
     private ArrayList<Integer> oddDegreeNodes;
     private Queue<double[]> pq;
-
     private List<double[]>[] matching;
     private boolean[] paired;
-    public GreedyMinWeightMatching(Graph G,Graph total){
+
+    public GreedyMinWeightMatching(Graph G, Graph total) {
         //mst
         this.graph = G;
-        //graph contains all possiable edges
-        this.totalGraph=total;
+        //graph contains all possible edges
+        this.totalGraph = total;
         //isolate odd degree edges in mst
         this.isolateOddDegreeNode();
         // find match
-        matching=this.findMinWeightMatching();
+        matching = this.findMinWeightMatching();
         //merge two graphs, mst has changed to muti graph and ready for the next step
         this.mergeEdges();
     }
 
-    public void isolateOddDegreeNode(){
+    public void isolateOddDegreeNode() {
         // find the node with odd edges
         oddDegreeNodes = new ArrayList<>();
         List<double[]>[] edges = this.graph.getGraph();
-        for(int i = 0;i< edges.length;i++){
+        for (int i = 0; i < edges.length; i++) {
             int len = edges[i].size();
-            if(len%2!=0){
+            if (len % 2 != 0) {
                 oddDegreeNodes.add(i);
             }
         }
     }
 
-    public List<double[]>[] findMinWeightMatching(){
+    public List<double[]>[] findMinWeightMatching() {
         int len = graph.getNodes().size();
-        List<double[]>[] matching=new LinkedList[len];
+        List<double[]>[] matching = new LinkedList[len];
         for (int i = 0; i < len; i++) {
             matching[i] = new LinkedList<>();
         }
-        if(oddDegreeNodes.size()==0){
+        if (oddDegreeNodes.size() == 0) {
             return matching;
         }
         //for each vertex v in G', find the edge incident to v with the minimum weight, and add
@@ -53,20 +54,20 @@ public class GreedyMinWeightMatching {
         this.pq = new PriorityQueue<>((a, b) -> {
             return a[2] - b[2] > 0 ? 1 : (a[2] - b[2] < 0 ? -1 : 0);
         });
-        for(int i = 0;i<oddDegreeNodes.size();i++){
+        for (int i = 0; i < oddDegreeNodes.size(); i++) {
             int start = oddDegreeNodes.get(i);
             cut(start);
-            while(!pq.isEmpty()){
+            while (!pq.isEmpty()) {
                 double[] minEdge = pq.poll();
-                int from =(int) minEdge[0];
-                int to =(int) minEdge[1];
+                int from = (int) minEdge[0];
+                int to = (int) minEdge[1];
                 double distance = minEdge[2];
                 //if paired skip, and we only care about odd degree nodes
-                if(!paired[from] &&!paired[to] && oddDegreeNodes.contains(from) && oddDegreeNodes.contains(to)){
+                if (!paired[from] && !paired[to] && oddDegreeNodes.contains(from) && oddDegreeNodes.contains(to)) {
                     matching[from].add(minEdge);
-                    matching[to].add(new double[]{to,from,distance});
-                    paired[from]=true;
-                    paired[to]=true;
+                    matching[to].add(new double[]{to, from, distance});
+                    paired[from] = true;
+                    paired[to] = true;
                 }
             }
         }
@@ -85,22 +86,23 @@ public class GreedyMinWeightMatching {
         }
     }
 
-    private boolean containsE( List<double[]>mstI,double[] edge){
+    private boolean containsE(List<double[]> mstI, double[] edge) {
         // check for existence before merge
-        boolean r= false;
-        for(double[] e :mstI){
-            if (e[0]==edge[0] && e[1]==edge[1]){
-                r=true;
+        boolean r = false;
+        for (double[] e : mstI) {
+            if (e[0] == edge[0] && e[1] == edge[1]) {
+                r = true;
             }
         }
         return r;
     }
-    private void mergeEdges(){
+
+    private void mergeEdges() {
         // merge matching to the mst 
-        List<double[]>[] mst=graph.getGraph();
-        for(int i = 0 ;i < matching.length;i++){
-            for(double[] edge:matching[i]){
-                if(!containsE(mst[i],edge)){
+        List<double[]>[] mst = graph.getGraph();
+        for (int i = 0; i < matching.length; i++) {
+            for (double[] edge : matching[i]) {
+                if (!containsE(mst[i], edge)) {
                     mst[i].add(edge);
                 }
             }
@@ -108,8 +110,13 @@ public class GreedyMinWeightMatching {
         graph.setGraph(mst);
 
     }
-    public void show(){
-        for (int i = 0 ;i< oddDegreeNodes.size();i++){
+
+    public Graph getGraph() {
+        return this.graph;
+    }
+
+    public void show() {
+        for (int i = 0; i < oddDegreeNodes.size(); i++) {
             System.out.println(oddDegreeNodes.get(i));
         }
     }
