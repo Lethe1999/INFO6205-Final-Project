@@ -2,6 +2,7 @@ package edu.northeastern;
 
 import edu.northeastern.algorithm.*;
 import edu.northeastern.data.*;
+import edu.northeastern.optimization.TacticalOpt;
 
 import java.util.List;
 
@@ -29,20 +30,21 @@ public class Main {
         // Generate Tour
         System.out.println("Tour");
         Tour tour = new Tour(multiGraph);
-
-        // Get minimum tour (Traverse each node to get the minimum distance)
-        double minDistance = Double.MAX_VALUE;
-        int minNodeNumber = 0;
-        for (int i = 0; i < 156; i++) {
-            List<Node> path = tour.generateTSPTour(i);
-            if (tour.getDistance() < minDistance) {
-                minDistance = tour.getDistance();
-                minNodeNumber = i;
-            }
-        }
-        System.out.println(tour.getDistance());
-        System.out.println(minNodeNumber);
-        List<Node> path = tour.generateTSPTour(minNodeNumber);
+        List<Node> path = tour.generateTSPTour(6);
         System.out.println(path);
+
+        // Random swapping
+        TacticalOpt randomSwapping = new TacticalOpt(tour, graph);
+        path = randomSwapping.randomSwapping();
+        System.out.println(path);
+        System.out.println(randomSwapping.getBestDistance());
+
+
+        // 2-opt
+        TacticalOpt twoOpt = new TacticalOpt(tour, graph);
+        path = twoOpt.twoOpt();
+        System.out.println(path);
+        System.out.println(twoOpt.getBestDistance());
+
     }
 }

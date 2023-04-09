@@ -13,7 +13,6 @@ public class Tour {
     private boolean[] visited;
     // Recordings
     private List<Node> tour;    // Record tour path
-    private double distance;    // Record tour distance
 
     public Tour(Graph graph) {
         this.nodes = graph.getNodes();
@@ -28,7 +27,6 @@ public class Tour {
         });
         this.visited = new boolean[n];
         this.tour = new LinkedList<>();
-        this.distance = 0.0;
 
         // Start from 0 or any other nodes
         visited[start] = true;
@@ -42,15 +40,9 @@ public class Tour {
             if (!visited[to]) {         // Already checked in cut(). Could be removed
                 visited[to] = true;
                 tour.add(nodes.get(to));
-                distance += dis;
                 cut(to);
             }
         }
-
-        // Return to start node
-        Node startNode = tour.get(start);
-        Node endNode = tour.get(n - 1);
-        distance += Math.sqrt(Math.pow((startNode.getLatitude() - endNode.getLatitude()), 2) + Math.pow((startNode.getLongitude() - endNode.getLongitude()), 2));
 
         return tour;
     }
@@ -64,6 +56,11 @@ public class Tour {
         }
     }
 
-    public List<Node> getTour() {return tour;}
-    public double getDistance(){return distance;}
+    public List<double[]>[] getGraph() {
+        return graph;
+    }
+
+    public List<Node> getTour() {
+        return tour;
+    }
 }
