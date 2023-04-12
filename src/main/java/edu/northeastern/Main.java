@@ -2,11 +2,14 @@ package edu.northeastern;
 
 import edu.northeastern.algorithm.*;
 import edu.northeastern.data.*;
+import edu.northeastern.optimization.AntColony;
+import edu.northeastern.optimization.Genetic;
 import edu.northeastern.optimization.TacticalOpt;
 
 import java.util.List;
 
 public class Main {
+
     public static void main(String[] args) {
         // Creat graph
         Graph graph = new Graph();
@@ -32,7 +35,7 @@ public class Main {
         Tour tour = new Tour(multiGraph);
         List<Node> path = tour.generateTSPTour(6);
         System.out.println(path);
-
+        /*
         // Random swapping
         TacticalOpt randomSwapping = new TacticalOpt(tour, graph);
         path = randomSwapping.randomSwapping();
@@ -45,6 +48,24 @@ public class Main {
         path = twoOpt.twoOpt();
         System.out.println(path);
         System.out.println(twoOpt.getBestDistance());
+
+        //Genetic
+        List<List<Node>> population = twoOpt.getSolutions();
+        //System.out.println(population.size());
+        Genetic genetic = new Genetic(graph,1000,path);
+        List<Node> geResult= genetic.start(population,5);
+        System.out.println("Result is :");
+        System.out.println(geResult);
+        System.out.println(genetic.calculateDistance(geResult));
+        System.out.println("validation result: "+genetic.validation(geResult,156));
+        */
+        // Ant
+        AntColony ac = new AntColony(graph);
+        List<Node> acPath = ac.start(100);
+        System.out.println(acPath);
+        System.out.println(ac.calculateDistance(acPath));
+        System.out.println(ac.validation(acPath,156));
+
 
     }
 }

@@ -12,11 +12,13 @@ public class TacticalOpt {
     private List<double[]>[] graph;     // Should be the Originally all connected graph
     private List<Node> bestTour;
     private double bestDistance;
+    private List<List<Node>> solutions;
 
     public TacticalOpt(Tour tour, Graph originalGraph) {
         this.graph = originalGraph.getGraph();
         this.bestTour = tour.getTour();
         this.bestDistance = calculateDistance(bestTour);
+        this.solutions = new LinkedList<>();
     }
 
 
@@ -66,6 +68,8 @@ public class TacticalOpt {
                         double newDistance = calculateDistance(newTour);
                         // Update Distance
                         if (newDistance < bestDistance) {
+                            //System.out.println("find");
+                            solutions.add(newTour);
                             bestDistance = newDistance;
                             bestTour = newTour;
                             hasImprovement = true;
@@ -150,5 +154,9 @@ public class TacticalOpt {
 
     public double getBestDistance() {
         return bestDistance;
+    }
+
+    public List<List<Node>> getSolutions() {
+        return solutions;
     }
 }
