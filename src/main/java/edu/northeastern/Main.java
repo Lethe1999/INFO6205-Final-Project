@@ -61,7 +61,7 @@ public class Main {
         */
         // Ant
         AntColony ac = new AntColony(graph);
-        List<Node> acPath = ac.start(100);
+        List<Node> acPath = ac.start(1);
         System.out.println(acPath);
         System.out.println(ac.calculateDistance(acPath));
         System.out.println(ac.validation(acPath,156));

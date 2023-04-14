@@ -90,10 +90,10 @@ public class AntColony {
             }
         }
         for(int i = 0;i< ants.size();i++){
-            updateMatrix(ants.get(i));
+            updateMatrix(ants.get(i),calculateDistance(ants.get(i)));
         }
     }
-    void updateMatrix(List<Node> path){
+    void updateMatrix(List<Node> path,double dis){
         for(int i = 0;i<path.size();i++){
             int j = i+1;
             if(j>path.size()-1){
@@ -102,7 +102,8 @@ public class AntColony {
             double tij = phMatrix.get(i).get(j);
             Node from = findNode(i);
             Node to = findNode(j);
-            double dis = Math.sqrt(Math.pow((from.getLatitude() - to.getLatitude()), 2) + Math.pow((from.getLongitude() - to.getLongitude()), 2));
+            //double dis = Math.sqrt(Math.pow((from.getLatitude() - to.getLatitude()), 2) + Math.pow((from.getLongitude() - to.getLongitude()), 2));
+            //double dis = calculateDistance(path);
             double newtij = tij + 1/dis;
             phMatrix.get(i).set(j,newtij);
         }
