@@ -13,8 +13,10 @@ public class TacticalOpt {
     private List<Node> bestTour;
     private double bestDistance;
     private List<List<Node>> solutions;
+    private double[][] edgesMatrix;
 
     public TacticalOpt(Tour tour, Graph originalGraph) {
+        this.edgesMatrix=originalGraph.getEdgeMatrix();
         this.graph = originalGraph.getGraph();
         this.bestTour = tour.getTour();
         this.bestDistance = calculateDistance(bestTour);
@@ -52,6 +54,7 @@ public class TacticalOpt {
 
 
     public List<Node> twoOpt() {
+        int countSolution=0;
         System.out.println("bD: " + bestDistance);
         boolean hasImprovement = true;
 
@@ -69,7 +72,11 @@ public class TacticalOpt {
                         // Update Distance
                         if (newDistance < bestDistance) {
                             //System.out.println("find");
-                            solutions.add(newTour);
+                            if(countSolution<100){
+                                solutions.add(newTour);
+                                countSolution++;
+                            }
+
                             bestDistance = newDistance;
                             bestTour = newTour;
                             hasImprovement = true;
@@ -125,10 +132,12 @@ public class TacticalOpt {
 
     // Input bestTour indices
     private double findPath(List<Node> tour, int a, int b) {
+        /*
         for (double[] edge : graph[tour.get(a).getUnique_id()]) {
             if (edge[1] == tour.get(b).getUnique_id()) return edge[2];
         }
-        return Integer.MAX_VALUE;
+        return Integer.MAX_VALUE;*/
+        return this.edgesMatrix[tour.get(a).getUnique_id()][tour.get(b).getUnique_id()];
     }
 
 

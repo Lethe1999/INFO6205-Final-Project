@@ -13,10 +13,19 @@ public class AntColony {
     private List<List<Node>> ants;
     List<List<Double>> phMatrix;
     List<Node> BestPath=null;
+    HashMap<List<Node>,Double> dismap= new HashMap<>();
+    private double[][] edgesMatrix;
 
     public AntColony(Graph totalG){
+        this.edgesMatrix=totalG.getEdgeMatrix();
         totalGraph=totalG.getGraph();
         nodes=totalG.getNodes();
+        Collections.sort(nodes, new Comparator<Node>(){
+            public int compare(Node o1, Node o2){
+                return o1.getUnique_id() - o2.getUnique_id();
+            }
+        });
+
         int size = totalG.getNodes().size();
         phMatrix=new ArrayList<>();
         ants=new LinkedList<>();
@@ -37,33 +46,39 @@ public class AntColony {
     public double calculateDistance(List<Node> newTour) {
         double dis = 0.0;
 
+        if(dismap.containsKey(newTour)){
+            return dismap.get(newTour);
+        }
+
         for (int i = 0; i < newTour.size() - 1; i++) {
             dis += findPath(newTour, i, i + 1);
         }
         // end -> first
         dis += findPath(newTour, newTour.size() - 1, 0);
-
+        dismap.put(newTour,dis);
         return dis;
     }
     private double findPath(List<Node> tour, int a, int b) {
-        for (double[] edge : totalGraph[tour.get(a).getUnique_id()]) {
+        /*
+        for (double[] edge : graph[tour.get(a).getUnique_id()]) {
             if (edge[1] == tour.get(b).getUnique_id()) return edge[2];
         }
-        return Integer.MAX_VALUE;
+        return Integer.MAX_VALUE;*/
+        return this.edgesMatrix[tour.get(a).getUnique_id()][tour.get(b).getUnique_id()];
     }
     private Node findNode(int id){
-        for(int i = 0;i<nodes.size();i++){
-            if(nodes.get(i).getUnique_id()==id){
-                return nodes.get(i);
-            }
-        }
-        return null;
+        return nodes.get(id);
     }
 
-    public List<Node> start(int count ){
+    public List<Node> start(int count ,List<List<Node>> population){
+        //initial matrix by population
+        for(int i = 0;i< population.size();i++){
+            updateMatrix(population.get(i),calculateDistance(population.get(i)));
+        }
         while(count>0){
             System.out.println("loop "+count +"starts");
             for (int i=0;i<totalGraph.length;i++){
+                //System.out.println("ant "+i+" moves "+count);
                 List<Node> path = moveAnt(i);
                 ants.set(i,path);
                 if(BestPath==null || calculateDistance(path)<calculateDistance(BestPath)){
@@ -200,6 +215,7 @@ public class AntColony {
     }
 
     private boolean visited(List<Node> ant,int id){
+
         for (int i = 0;i< ant.size();i++){
             if(ant.get(i).getUnique_id()==id){
                 return true;
@@ -209,10 +225,10 @@ public class AntColony {
     }
     public boolean validation(List<Node> path,int size ){
         if(path.size()!=size){
-            return false;
+            //return false;
         }
-        int[] r = new int[156];
-        for(int i = 0;i< size;i++){
+        int[] r = new int[path.size()];
+        for(int i = 0;i< path.size();i++){
             Node n=path.get(i);
             r[n.getUnique_id()]+=1;
         }
@@ -223,6 +239,7 @@ public class AntColony {
                 return false;
             }
         }
+
         return true;
     }
 

@@ -5,10 +5,15 @@ import java.io.*;
 
 public class Graph {
     private ArrayList<Node> nodes;
+    private double[][] edgesMatrix;// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     private List<double[]>[] graph;     // double[]{a, b, dis}
 
     public Graph() {
         nodes = new ArrayList<>();
+    }
+
+    public double[][] getEdgeMatrix(){
+        return edgesMatrix;
     }
 
     public void createGraph(String name) {
@@ -33,7 +38,10 @@ public class Graph {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //!!!!!!!!!!!!!!!!!!!!
+        edgesMatrix= new double[nodes.size()][nodes.size()];
 
+        //!!!!!!!!!!!!!!!!!!!
         // Create graph
         this.graph = new LinkedList[n];
         for (int i = 0; i < nodes.size(); i++) {
@@ -46,6 +54,10 @@ public class Graph {
                         a.getUnique_id(), b.getUnique_id(),
                         Math.sqrt(Math.pow((a.getLatitude() - b.getLatitude()), 2) + Math.pow((a.getLongitude() - b.getLongitude()), 2))}
                 );
+                //!!!!!!!!!!!!!!!!!!!!!
+                edgesMatrix[a.getUnique_id()][b.getUnique_id()]=Math.sqrt(Math.pow((a.getLatitude() - b.getLatitude()), 2) + Math.pow((a.getLongitude() - b.getLongitude()), 2));
+                edgesMatrix[b.getUnique_id()][a.getUnique_id()]=Math.sqrt(Math.pow((a.getLatitude() - b.getLatitude()), 2) + Math.pow((a.getLongitude() - b.getLongitude()), 2));
+                //!!!!!!!!!!!!!!!!
             }
         }
     }

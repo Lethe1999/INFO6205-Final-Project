@@ -12,9 +12,11 @@ public class Genetic {
     private List<List<Node>> population;
     private PriorityQueue<List<Node>> pq;
     private int count;
+    private double[][] edgesMatrix;
     List<Node> BestSolution;
     public Genetic(){}
     public Genetic(Graph g,int c,List<Node> bS){
+        this.edgesMatrix=g.getEdgeMatrix();
         this.totalGraph =g.getGraph();
         this.count=c;
         this.pq = new PriorityQueue<>((a, b) -> {
@@ -34,10 +36,12 @@ public class Genetic {
         return dis;
     }
     private double findPath(List<Node> tour, int a, int b) {
-        for (double[] edge : totalGraph[tour.get(a).getUnique_id()]) {
+        /*
+        for (double[] edge : graph[tour.get(a).getUnique_id()]) {
             if (edge[1] == tour.get(b).getUnique_id()) return edge[2];
         }
-        return Integer.MAX_VALUE;
+        return Integer.MAX_VALUE;*/
+        return this.edgesMatrix[tour.get(a).getUnique_id()][tour.get(b).getUnique_id()];
     }
 
     private void getResult(int size){
@@ -59,20 +63,21 @@ public class Genetic {
         }
     }
     public List<Node> start(List<List<Node>> p,int num){
+        System.out.println("Genetic start");
         createPopulation(p);
         count = num;
         while(count>0){
             //add population in pq
             insertPq();
-            System.out.println("insertPq() "+ count);
+            //System.out.println("insertPq() "+ count);
             getCrossOver(population);
-            System.out.println(" getCrossOver(population)"+count);
+            //System.out.println(" getCrossOver(population)"+count);
             getMutation(population);
-            System.out.println(" getMutation(population)"+count);
+            //System.out.println(" getMutation(population)"+count);
             getNewParent();
-            System.out.println("getNewParent()"+count);
+            //System.out.println("getNewParent()"+count);
             getResult(100);
-            System.out.println(" getResult(100)"+count);
+            //System.out.println(" getResult(100)"+count);
             System.out.println("Best solution is "+calculateDistance(BestSolution));
             count--;
         }
@@ -108,10 +113,21 @@ public class Genetic {
         }
     }
     private List<Node> getMChild(List<Node> parent,int start,int end){
+
         List<Node>  child = new LinkedList<>();
         Random rand = new Random();
         //add after rand int
-        int rand_int = rand.nextInt(parent.size()-(end-start+1));
+
+
+        int bound= (parent.size()-(end-start+1));
+        int rand_int =0;
+        if(bound==0){
+            rand_int=bound;
+        }
+        else {
+            rand_int = rand.nextInt(parent.size()-(end-start+1));
+        }
+
         for(int i =0;i< parent.size();i++){
             if(i<start || i >end){
                 child.add(parent.get(i));
@@ -179,10 +195,10 @@ public class Genetic {
     }
     public boolean validation(List<Node> path,int size ){
         if(path.size()!=size){
-            return false;
+            //return false;
         }
-        int[] r = new int[156];
-        for(int i = 0;i< size;i++){
+        int[] r = new int[path.size()];
+        for(int i = 0;i< path.size();i++){
             Node n=path.get(i);
             r[n.getUnique_id()]+=1;
         }
@@ -193,6 +209,7 @@ public class Genetic {
                 return false;
             }
         }
+
         return true;
     }
 
