@@ -1,6 +1,6 @@
-# INFO6205 Final Project
+# INFO6205 Final Project - THE TRAVELING SALESMAN PROBLEM
 
-### THE TRAVELING SALESMAN PROBLEM
+### Team: Changyu Wu, Ruizhe Zeng
 
 #### Description
 The travelling salesman problem (also called the travelling salesperson problem or TSP) asks the following question: "Given a list of cities and the distances between each pair of cities, what is the shortest possible route that visits each city exactly once and returns to the origin city?"
