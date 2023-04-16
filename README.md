@@ -1,4 +1,5 @@
-# INFO6205 Final Project - THE TRAVELING SALESMAN PROBLEM
+# INFO6205 Final Project
+## THE TRAVELING SALESMAN PROBLEM
 
 ### Team: Changyu Wu, Ruizhe Zeng
 
