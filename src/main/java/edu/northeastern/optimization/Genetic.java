@@ -194,8 +194,8 @@ public class Genetic {
         }
     }
     public boolean validation(List<Node> path,int size ){
-        if(path.size()!=size){
-            //return false;
+        if(path==null||path.size()!=size||path.size()<2){
+            return false;
         }
         int[] r = new int[path.size()];
         for(int i = 0;i< path.size();i++){
@@ -209,7 +209,20 @@ public class Genetic {
                 return false;
             }
         }
-
+        double dis =0.0;
+        for(int i = 0;i<path.size();i++){
+            int j = i+1;
+            if(j>path.size()-1){
+                break;
+            }
+            Node a = path.get(i);
+            Node b=path.get(j);
+            dis+=Math.sqrt(Math.pow((a.getLatitude() - b.getLatitude()), 2) + Math.pow((a.getLongitude() - b.getLongitude()), 2));
+        }
+        Node a = path.get(0);
+        Node b = path.get(path.size()-1);
+        dis+=Math.sqrt(Math.pow((a.getLatitude() - b.getLatitude()), 2) + Math.pow((a.getLongitude() - b.getLongitude()), 2));
+        System.out.println("Validation complete, with valid tour dis = "+dis);
         return true;
     }
 

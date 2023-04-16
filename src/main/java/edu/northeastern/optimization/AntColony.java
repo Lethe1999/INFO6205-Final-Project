@@ -11,7 +11,9 @@ public class AntColony {
     private List<double[]>[] totalGraph;
     private List<Node> nodes;
     private List<List<Node>> ants;
-    List<List<Double>> phMatrix;
+    double[][] phMatrix;
+    //tij = [from][to]
+    boolean[][] vistedMatrix;
     List<Node> BestPath=null;
     HashMap<List<Node>,Double> dismap= new HashMap<>();
     private double[][] edgesMatrix;
@@ -27,18 +29,18 @@ public class AntColony {
         });
 
         int size = totalG.getNodes().size();
-        phMatrix=new ArrayList<>();
+        phMatrix=new double[size][size];
         ants=new LinkedList<>();
         for(int i = 0;i<size;i++){
             //initial ants
             List<Node> path = new LinkedList<>();
             ants.add(path);
+
             //initial matrix to 1
-            List<Double> tmp = new ArrayList<>();
             for(int j = 0;j<size;j++){
-               tmp.add(1.0);
+               phMatrix[i][j]=1;
             }
-            phMatrix.add(tmp);
+
         }
 
 
@@ -75,19 +77,21 @@ public class AntColony {
         for(int i = 0;i< population.size();i++){
             updateMatrix(population.get(i),calculateDistance(population.get(i)));
         }
+
         while(count>0){
             System.out.println("loop "+count +"starts");
+            //initial vistedMatrix every loop
+            this.initVistedM();
             for (int i=0;i<totalGraph.length;i++){
-                //System.out.println("ant "+i+" moves "+count);
                 List<Node> path = moveAnt(i);
                 ants.set(i,path);
                 if(BestPath==null || calculateDistance(path)<calculateDistance(BestPath)){
                     BestPath=path;
                 }
             }
-            System.out.println("Updateing Matrix");
+            //System.out.println("Updateing Matrix");
             updateMatrix();
-            System.out.println("Clearing ants");
+            //System.out.println("Clearing ants");
             ants.clear();
             ants= new LinkedList<>();
             for(int i = 0;i< totalGraph.length;i++){
@@ -98,10 +102,10 @@ public class AntColony {
         return BestPath;
     }
     void updateMatrix(){
-        for (int i =0;i<phMatrix.size();i++){
-            for(int j = 0;j<phMatrix.get(i).size();j++){
-                double tij = phMatrix.get(i).get(j);
-                phMatrix.get(i).set(j,tij*0.5);
+        for (int i =0;i<phMatrix.length;i++){
+            for(int j = 0;j<phMatrix[i].length;j++){
+                double tij = phMatrix[i][j];
+                phMatrix[i][j] = tij*0.5;
             }
         }
         for(int i = 0;i< ants.size();i++){
@@ -114,29 +118,44 @@ public class AntColony {
             if(j>path.size()-1){
                 break;
             }
-            double tij = phMatrix.get(i).get(j);
-            Node from = findNode(i);
-            Node to = findNode(j);
+
+            int from = path.get(i).getUnique_id();
+            int to = path.get(j).getUnique_id();
+            double tij = phMatrix[from][to];
             //double dis = Math.sqrt(Math.pow((from.getLatitude() - to.getLatitude()), 2) + Math.pow((from.getLongitude() - to.getLongitude()), 2));
             //double dis = calculateDistance(path);
             double newtij = tij + 1/dis;
-            phMatrix.get(i).set(j,newtij);
+            phMatrix[from][to] = newtij;
+            phMatrix[to][from] = newtij;
         }
+        int from =path.get(0).getUnique_id();
+        int to = path.get(path.size()-1).getUnique_id();
+        double tij = phMatrix[from][to];
+        double newtij = tij + 1/dis;
+        phMatrix[from][to] = newtij;
+        phMatrix[to][from] = newtij;
+
     }
     private List<Node> moveAnt(int index){
         int size = totalGraph.length;
         Node curNode = findNode(index);
+        //insert first node(start point)
         List<Node> ant = new LinkedList<>();
+        ant.add(curNode);
+        vistedMatrix[index][curNode.getUnique_id()]=true;
+
         while (ant.size()<size){
-            Node node = chooseNode(curNode,ant);
+            Node node = chooseNode(curNode,ant,index);
             ant.add(node);
+            //update visited matrix
+            vistedMatrix[index][node.getUnique_id()]=true;
             curNode=node;
         }
         return ant;
 
     }
 
-    private Node chooseNode(Node curNode,List<Node> ant){
+    private Node chooseNode(Node curNode,List<Node> ant,int index){
         //{p,to}
         ArrayList<double[]> possibilities= new ArrayList<>();
 
@@ -144,11 +163,11 @@ public class AntColony {
         for (int i = 0;i< edges.size();i++){
             double from =  edges.get(i)[0];
             double to =  edges.get(i)[1];
-            if(visited(ant,(int)to)){
+            if(visited((int)to,index)){
                continue;
             }
             double dis =  edges.get(i)[2];
-            double tij = phMatrix.get((int)from).get((int)to);
+            double tij = phMatrix[(int)from][(int)to];
             double partP = tij*(1.0/dis);
             possibilities.add(new double[]{partP,to});
 
@@ -169,6 +188,9 @@ public class AntColony {
         Comparator<double[]> comp = (double[] a, double[] b) -> {
             if(a[0]>b[0]){
                 return -1;
+            }
+            else if(a[0]==b[0]){
+                return 0;
             }
             else{
                 return 1;
@@ -214,18 +236,20 @@ public class AntColony {
 
     }
 
-    private boolean visited(List<Node> ant,int id){
+    private boolean visited(int id,int index){
 
+        return this.vistedMatrix[index][id];
+        /*
         for (int i = 0;i< ant.size();i++){
             if(ant.get(i).getUnique_id()==id){
                 return true;
             }
         }
-        return false;
+        return false;*/
     }
     public boolean validation(List<Node> path,int size ){
-        if(path.size()!=size){
-            //return false;
+        if(path==null||path.size()!=size||path.size()<2){
+            return false;
         }
         int[] r = new int[path.size()];
         for(int i = 0;i< path.size();i++){
@@ -239,8 +263,30 @@ public class AntColony {
                 return false;
             }
         }
-
+        double dis =0.0;
+        for(int i = 0;i<path.size();i++){
+            int j = i+1;
+            if(j>path.size()-1){
+                break;
+            }
+            Node a = path.get(i);
+            Node b=path.get(j);
+            dis+=Math.sqrt(Math.pow((a.getLatitude() - b.getLatitude()), 2) + Math.pow((a.getLongitude() - b.getLongitude()), 2));
+        }
+        Node a = path.get(0);
+        Node b = path.get(path.size()-1);
+        dis+=Math.sqrt(Math.pow((a.getLatitude() - b.getLatitude()), 2) + Math.pow((a.getLongitude() - b.getLongitude()), 2));
+        System.out.println("Validation complete, with valid tour dis = "+dis);
         return true;
+    }
+    private void initVistedM(){
+        this.vistedMatrix=new boolean[nodes.size()][nodes.size()];
+        for(int i = 0;i<this.vistedMatrix.length;i++){
+            for(int j = 0;j<this.vistedMatrix[i].length;j++){
+                vistedMatrix[i][j]=false;
+            }
+        }
+
     }
 
 

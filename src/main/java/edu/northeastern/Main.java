@@ -13,8 +13,8 @@ public class Main {
     public static void main(String[] args) {
         // Creat graph
         Graph graph = new Graph();
-        graph.createGraph("src/main/resources/info6205.spring2023.teamproject.csv");
-        //graph.createGraph("src/main/resources/crimeSample.csv");
+        //graph.createGraph("src/main/resources/info6205.spring2023.teamproject.csv");
+        graph.createGraph("src/main/resources/crimeSample.csv");
 //        graph.showGraph("Total graph");
 
         // Using Prim Algorithm to create Minimum Spanning Tree
@@ -55,7 +55,7 @@ public class Main {
         System.out.println("Population size = "+population.size());
         //System.out.println(population.size());
         Genetic genetic = new Genetic(graph,0,path);
-        List<Node> geResult= genetic.start(population,100);
+        List<Node> geResult= genetic.start(population,0);
         System.out.println("Result is :");
         System.out.println(geResult);
         System.out.println("dis:"+genetic.calculateDistance(geResult));
@@ -65,7 +65,7 @@ public class Main {
 
         // Ant
         AntColony ac = new AntColony(graph);
-        List<Node> acPath = ac.start(5,population);
+        List<Node> acPath = ac.start(1000,population);
         System.out.println(acPath);
         System.out.println(ac.calculateDistance(acPath));
         System.out.println("validation result for ant: "+ac.validation(acPath,156));
