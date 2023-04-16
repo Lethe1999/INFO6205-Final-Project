@@ -25,7 +25,7 @@ public class TacticalOpt {
 
 
     public List<Node> randomSwapping() {
-        System.out.println("bD: " + bestDistance);
+        System.out.println("Current Best Distance: " + bestDistance);
         Random random = new Random();
         boolean hasImprovement = true;
         int cnt = bestTour.size() * bestTour.size() / 10;
@@ -55,7 +55,7 @@ public class TacticalOpt {
 
     public List<Node> twoOpt() {
         int countSolution=0;
-        System.out.println("bD: " + bestDistance);
+        System.out.println("Current Best Distance: " + bestDistance);
         boolean hasImprovement = true;
 
         // Loop until no improvements are made
