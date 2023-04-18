@@ -12,15 +12,18 @@ public class Main {
 
     public static void main(String[] args) {
         // Creat graph
+        System.out.println("--------------------- Create Graph ---------------------");
         Graph graph = new Graph();
-//        graph.createGraph("src/main/resources/info6205.spring2023.teamproject.csv");
-        graph.createGraph("src/main/resources/crimeSample.csv");
+        graph.createGraph("src/main/resources/info6205.spring2023.teamproject.csv");
+        final int ROWS = 585;
 
         // Using Prim Algorithm to create Minimum Spanning Tree
+        System.out.println("--------------------- Create MST with Prim ---------------------");
         Prim prim = new Prim(graph);
         List<double[]>[] mst = prim.getMst();
 
         // Build multi graph that includes only even degree nodes except solo node
+        System.out.println("--------------------- Multi Graph ---------------------");
         Graph graphMst = new Graph();
         graphMst.setNodes(graph.getNodes());
         graphMst.setGraph(mst);
@@ -28,42 +31,64 @@ public class Main {
         Graph multiGraph = gmw.getGraph();
 
         // Generate Tour
-        System.out.println("Tour");
+        System.out.println("--------------------- Generate Tour ---------------------");
         Tour tour = new Tour(multiGraph);
-        List<Node> path = tour.generateTSPTour(6);
-        System.out.println(path);
+        List<Node> firstPath = tour.generateTSPTour(6);
+        System.out.println("First path: " + firstPath);
 
         // Random swapping
+        System.out.println("--------------------- Random Swapping ---------------------");
         TacticalOpt randomSwapping = new TacticalOpt(tour, graph);
-        path = randomSwapping.randomSwapping();
-        System.out.println(path);
-        System.out.println("Random swapping best result:" + randomSwapping.getBestDistance());
+        List<Node> randomSwappingPath = randomSwapping.randomSwapping();
+        double randomSwappingDis = randomSwapping.getBestDistance();
+        System.out.println("Best result: " + randomSwappingDis);
+        System.out.println("Path: " + randomSwappingPath);
+
+        // Result
+        double bestRouteDis = randomSwappingDis;
+        List<Node> bestRoutePath = randomSwappingPath;
 
         // 2-opt
+        System.out.println("--------------------- 2-OPT ---------------------");
         TacticalOpt twoOpt = new TacticalOpt(tour, graph);
-        path = twoOpt.twoOpt();
-        System.out.println(path);
-        System.out.println("opt2 best result:" + twoOpt.getBestDistance());
+        List<Node> twoOptPath = twoOpt.twoOpt();
+        double twoOptDis = twoOpt.getBestDistance();
+        System.out.println("Best result: " + twoOptDis);
+        System.out.println("Path: " + twoOptPath);
+        if (twoOptDis <= randomSwappingDis) {
+            bestRouteDis = twoOptDis;
+            bestRoutePath = twoOptPath;
+        }
 
         // Genetic
+        System.out.println("--------------------- Genetic ---------------------");
         List<List<Node>> population = twoOpt.getSolutions();
-        System.out.println("Population size = " + population.size());
-        //System.out.println(population.size());
-        Genetic genetic = new Genetic(graph, 0, path);
-        List<Node> geResult = genetic.start(population, 0);
-        System.out.println("Result is :");
-        System.out.println(geResult);
-        System.out.println("dis:" + genetic.calculateDistance(geResult));
-        System.out.println("validation result for genetic: " + genetic.validation(geResult, 156));
+        System.out.println("Population size: " + population.size());
+        Genetic genetic = new Genetic(graph, 0, twoOptPath);
+        List<Node> geneticPath = genetic.start(population, 0);
+        double geneticDis = genetic.calculateDistance(geneticPath);
+        System.out.println("Best result: " + geneticDis);
+        System.out.println("Path:" + geneticPath);
+        if (geneticDis <= twoOptDis) {
+            bestRouteDis = geneticDis;
+            bestRoutePath = geneticPath;
+        }
 
         // Ant
+        System.out.println("--------------------- Ant Colony ---------------------");
         AntColony ac = new AntColony(graph);
-        List<Node> acPath = ac.start(1000, population);
-        System.out.println(acPath);
-        System.out.println(ac.calculateDistance(acPath));
-        System.out.println("validation result for ant: " + ac.validation(acPath, 156));
-        System.out.println(acPath);
+        List<Node> antColonyPath = ac.start(1, population);     // Set loop
+        double antColonyDis = ac.calculateDistance(antColonyPath);
+        System.out.println("Best result: " + antColonyDis);
+        System.out.println("Path: " + antColonyPath);
+        if (antColonyDis <= geneticDis) {
+            bestRouteDis = antColonyDis;
+            bestRoutePath = antColonyPath;
+        }
 
-
+        // Best Route
+        System.out.println("--------------------- Best Route ---------------------");
+        System.out.println("Best Route Distance: " + bestRouteDis);
+        System.out.println("Best Route Path: " + bestRoutePath);
     }
 }

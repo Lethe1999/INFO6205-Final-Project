@@ -10,6 +10,7 @@ import edu.northeastern.optimization.Genetic;
 import edu.northeastern.optimization.TacticalOpt;
 import org.junit.jupiter.api.Test;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,47 +42,62 @@ public class TSPTest {
         // Generate Tour
         System.out.println("--------------------- Generate Tour ---------------------");
         Tour tour = new Tour(multiGraph);
-        List<Node> path = tour.generateTSPTour(6);
-        System.out.println("First path: " + path);
+        List<Node> firstPath = tour.generateTSPTour(6);
+        System.out.println("First path: " + firstPath);
 
         // Random swapping
         System.out.println("--------------------- Random Swapping ---------------------");
         TacticalOpt randomSwapping = new TacticalOpt(tour, graph);
-        path = randomSwapping.randomSwapping();
+        List<Node> randomSwappingPath = randomSwapping.randomSwapping();
         double randomSwappingDis = randomSwapping.getBestDistance();
         System.out.println("Best result: " + randomSwappingDis);
-        System.out.println("Path: " + path);
+        System.out.println("Path: " + randomSwappingPath);
+
+        // Result
+        double bestRouteDis = randomSwappingDis;
+        List<Node> bestRoutePath = randomSwappingPath;
 
         // 2-opt
         System.out.println("--------------------- 2-OPT ---------------------");
         TacticalOpt twoOpt = new TacticalOpt(tour, graph);
-        path = twoOpt.twoOpt();
+        List<Node> twoOptPath = twoOpt.twoOpt();
         double twoOptDis = twoOpt.getBestDistance();
         System.out.println("Best result: " + twoOptDis);
-        System.out.println("Path: " + path);
+        System.out.println("Path: " + twoOptPath);
         assertTrue(twoOptDis <= randomSwappingDis);
+        bestRouteDis = twoOptDis;
+        bestRoutePath = twoOptPath;
 
         // Genetic
         System.out.println("--------------------- Genetic ---------------------");
         List<List<Node>> population = twoOpt.getSolutions();
         System.out.println("Population size: " + population.size());
-        Genetic genetic = new Genetic(graph, 0, path);
-        List<Node> geResult = genetic.start(population, 0);
-        double geneticDis = genetic.calculateDistance(geResult);
+        Genetic genetic = new Genetic(graph, 0, twoOptPath);
+        List<Node> geneticPath = genetic.start(population, 0);
+        double geneticDis = genetic.calculateDistance(geneticPath);
         System.out.println("Best result: " + geneticDis);
-        System.out.println("Path:" + geResult);
-        assertTrue(genetic.validation(geResult, ROWS));
+        System.out.println("Path:" + geneticPath);
+        assertTrue(genetic.validation(geneticPath, ROWS));
         assertTrue(geneticDis <= twoOptDis);
+        bestRouteDis = geneticDis;
+        bestRoutePath = geneticPath;
 
         // Ant
         System.out.println("--------------------- Ant Colony ---------------------");
         AntColony ac = new AntColony(graph);
-        List<Node> acPath = ac.start(1, population);
-        double acDis = ac.calculateDistance(acPath);
-        System.out.println("Best result: " + acDis);
-        System.out.println("Path: " + acPath);
-        assertTrue(ac.validation(acPath, ROWS));
-        assertTrue(acDis < geneticDis);
+        List<Node> antColonyPath = ac.start(1, population);
+        double antColonyDis = ac.calculateDistance(antColonyPath);
+        System.out.println("Best result: " + antColonyDis);
+        System.out.println("Path: " + antColonyPath);
+        assertTrue(ac.validation(antColonyPath, ROWS));
+        assertTrue(antColonyDis < geneticDis);
+        bestRouteDis = antColonyDis;
+        bestRoutePath = antColonyPath;
+
+        // Best Route
+        System.out.println("--------------------- Best Route ---------------------");
+        System.out.println("Best Route Distance: " + bestRouteDis);
+        System.out.println("Best Route Path: " + bestRoutePath);
     }
 
 }
