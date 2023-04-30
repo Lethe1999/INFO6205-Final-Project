@@ -16,3 +16,8 @@ To run the Project please import to your IDE go to src/main/java/edu/northeaster
 
 In the main function it will create a map base on the input CSV file (in this case 585 data set,but you can change the file name if needed),use Prim to create MST, trans to Muti graph with only even degree node, generate the tour , and finally do 2-opt,random swapping,genetic alg and ant colony to get the best result. More details please see the comments , thank you .
 
+To set the run times for genetic , change the number at 
+line 68 List<Node> geneticPath = genetic.start(population, runHowManyTime);
+
+to set the run times for ant colony, change the number at 
+line 80 ist<Node> antColonyPath = ac.start(runHowManyTime, population);
